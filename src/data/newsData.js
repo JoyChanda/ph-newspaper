@@ -205,8 +205,8 @@ const generateMoreNews = () => {
       ...original,
       id: 100 + i,
       title: `${original.title} - পর্ব ${i}`,
-      district: districtIds[Math.floor(Math.random() * districtIds.length)], // Random district
-      views: Math.floor(Math.random() * 50000) + 1000,
+      district: districtIds[i % districtIds.length], // Deterministic
+      views: 1000 + (i * 345) % 50000, // Deterministic
       date: `২০২৬-০১-${(14 - (i % 14)).toString().padStart(2, '0')}` 
     });
   }
@@ -241,14 +241,12 @@ export const getCategoryById = (categoryId) => {
   return categories.find(cat => cat.id === categoryId);
 };
 
-// Start of New Helpers for District Feature
 export const getNewsByDistrict = (districtId) => {
   return newsArticles.filter(article => article.district === districtId);
 };
 
 export const getDistrictStats = (districtId) => {
   const districtNews = getNewsByDistrict(districtId);
-  // Calculate distribution by category
   const stats = {};
   categories.forEach(cat => {
     stats[cat.name] = 0;
