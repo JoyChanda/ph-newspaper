@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BreakingNews from '@/components/BreakingNews';
+import ViewCounter from '@/components/ViewCounter';
 import { getNewsById, getCategoryById, getNewsByCategory } from '@/data/newsData';
 
 export async function generateMetadata({ params }) {
@@ -49,6 +51,7 @@ export default async function NewsDetailPage({ params }) {
   return (
     <main className="min-h-screen bg-gray-50">
       <Navbar />
+      <BreakingNews />
 
       {/* Article Header */}
       <article className="py-12">
@@ -60,7 +63,7 @@ export default async function NewsDetailPage({ params }) {
             </Link>
             <span className="text-gray-400">/</span>
             <Link 
-              href={`/category/${article.category}`}
+              href={`/news/${article.category}`}
               className="text-gray-600 hover:text-red-600 transition-colors"
             >
               {category?.name}
@@ -118,11 +121,7 @@ export default async function NewsDetailPage({ params }) {
               <span>{article.date}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-              </svg>
-              <span>{article.views.toLocaleString('bn-BD')} বার পড়া হয়েছে</span>
+               <ViewCounter initialViews={article.views} />
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -137,6 +136,9 @@ export default async function NewsDetailPage({ params }) {
             <div className="absolute inset-0 flex items-center justify-center text-white text-6xl">
               📰
             </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                 <p className="text-white text-sm text-center">Image representation for: {article.title}</p>
+            </div>
           </div>
 
           {/* Article Content */}
@@ -150,6 +152,10 @@ export default async function NewsDetailPage({ params }) {
               <p className="text-lg text-gray-800 leading-relaxed mb-6">
                 এই ঘটনার প্রেক্ষিতে বিশেষজ্ঞরা মনে করছেন যে আগামী দিনগুলোতে এই বিষয়ে আরও গুরুত্বপূর্ণ উন্নয়ন দেখা যাবে। সংশ্লিষ্ট কর্তৃপক্ষ এই বিষয়ে জনগণের মতামত গ্রহণ করছে এবং প্রয়োজনীয় পদক্ষেপ নিতে প্রস্তুত রয়েছে।
               </p>
+
+              <blockquote className="border-l-4 border-red-600 pl-4 italic my-6 text-gray-700 bg-gray-50 p-4 rounded-r-lg">
+                "আমরা এই বিষয়ে সর্বোচ্চ গুরুত্ব দিচ্ছি এবং শীঘ্রই বিস্তারিত জানানো হবে।" - একজন মুখপাত্র
+              </blockquote>
 
               <p className="text-lg text-gray-800 leading-relaxed">
                 এই সংক্রান্ত আরও তথ্য ও আপডেট পেতে আমাদের সাথেই থাকুন। আমরা নিয়মিত এই বিষয়ে সর্বশেষ খবর প্রকাশ করব।
@@ -175,50 +181,50 @@ export default async function NewsDetailPage({ params }) {
                 <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                  </svg>
-                  WhatsApp
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      {/* Related News */}
-      {relatedNews.length > 0 && (
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-6xl">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1 bg-gradient-to-b from-red-600 to-blue-600 rounded-full"></div>
-              <h2 className="text-3xl font-bold gradient-text">সম্পর্কিত খবর</h2>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {relatedNews.map((news) => (
-                <Link
-                  key={news.id}
-                  href={`/news/${news.category}/${news.id}`}
-                  className="group bg-gray-50 rounded-xl shadow-lg overflow-hidden card-hover"
-                >
-                  <div className="relative h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
-                    <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-0 transition-opacity"></div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-red-600 transition-colors line-clamp-2 mb-2">
-                      {news.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
-                      {news.excerpt}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <Footer />
-    </main>
-  );
-}
+188:                   </svg>
+189:                   WhatsApp
+190:                 </button>
+191:               </div>
+192:             </div>
+193:           </div>
+194:         </div>
+195:       </article>
+196: 
+197:       {/* Related News */}
+198:       {relatedNews.length > 0 && (
+199:         <section className="py-12 bg-white">
+200:           <div className="container-custom max-w-6xl">
+201:             <div className="flex items-center gap-3 mb-8">
+202:               <div className="h-8 w-1 bg-gradient-to-b from-red-600 to-blue-600 rounded-full"></div>
+203:               <h2 className="text-3xl font-bold gradient-text">সম্পর্কিত খবর</h2>
+204:             </div>
+205: 
+206:             <div className="grid md:grid-cols-3 gap-6">
+207:               {relatedNews.map((news) => (
+208:                 <Link
+209:                   key={news.id}
+210:                   href={`/news/${news.category}/${news.id}`}
+211:                   className="group bg-gray-50 rounded-xl shadow-lg overflow-hidden card-hover"
+212:                 >
+213:                   <div className="relative h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+214:                     <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-0 transition-opacity"></div>
+215:                   </div>
+216:                   <div className="p-5">
+217:                     <h3 className="text-lg font-bold text-gray-800 group-hover:text-red-600 transition-colors line-clamp-2 mb-2">
+218:                       {news.title}
+219:                     </h3>
+220:                     <p className="text-sm text-gray-600 line-clamp-2">
+221:                       {news.excerpt}
+222:                     </p>
+223:                   </div>
+224:                 </Link>
+225:               ))}
+226:             </div>
+227:           </div>
+228:         </section>
+229:       )}
+230: 
+231:       <Footer />
+232:     </main>
+233:   );
+234: }
