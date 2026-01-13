@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📰 PH Newspaper - বাংলাদেশের খবর
 
-## Getting Started
+এটি একটি বাংলাদেশভিত্তিক আধুনিক অনলাইন নিউজ পোর্টাল, যা Next.js এবং Tailwind CSS দিয়ে তৈরি করা হয়েছে।
 
-First, run the development server:
+## ✨ বৈশিষ্ট্যসমূহ
+
+- **🔥 Breaking News Ticker**: সর্বশেষ গুরুত্বপূর্ণ খবরের জন্য স্ক্রলিং টিকার।
+- **⭐ Featured Headlines**: প্রিমিয়াম ডিজাইনের প্রধান খবরের সেকশন।
+- **🆕 Latest News Feed**: ক্যাটাগরি ফিল্টারিং সহ সর্বশেষ খবরের তালিকা।
+- **🗂️ Category-wise Filtering**: রাজনীতি, খেলাধুলা, প্রযুক্তি, বিনোদন ইত্যাদি বিভিন্ন বিভাগের খবর।
+- **📱 Responsive Design**: মোবাইল, ট্যাবলেট এবং ডেস্কটপ সব ডিভাইসের জন্য অপ্টিমাইজড।
+- **⚡ SEO Friendly**: প্রতিটি পেজের জন্য ডায়নামিক মেটাডেটা এবং সার্ভার সাইড রেন্ডারিং।
+- **🎨 Modern UI**: গ্লাস ইফেক্ট, গ্রেডিয়েন্ট এবং স্মুথ অ্যানিমেশন।
+
+## 🛠️ টেকনোলজি স্ট্যাক
+
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS v4
+- **Language**: JavaScript
+- **Font**: Noto Sans Bengali & Inter
+
+## 🚀 প্রজেক্ট রান করার নিয়ম
+
+প্রথমে ডিপেনডেন্সি ইনস্টল করুন:
+
+```bash
+npm install
+```
+
+তারপর ডেভেলপমেন্ট সার্ভার চালু করুন:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ব্রাউজারে [http://localhost:3000](http://localhost:3000) ভিজিট করুন।
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 📂 প্রোজেক্ট স্ট্রাকচার
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `src/app`: মেইন অ্যাপ্লিকেশন পেজ এবং রাউটিং।
+- `src/components`: রিইউজেবল কম্পোনেন্ট (Navbar, BreakingNews, Footer ইত্যাদি)।
+- `src/data`: মক বা স্যাম্পল ডাটা (`newsData.js`)।
+- `src/app/globals.css`: গ্লোবাল স্টাইল এবং কাস্টম অ্যানিমেশন।
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Made with ❤️ in Bangladesh
