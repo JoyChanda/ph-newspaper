@@ -3,10 +3,12 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { districts } from '@/data/districts';
+import { getNewsByDistrict } from '@/data/newsData';
 
-// Custom Icon to avoid Next.js import issues
+// Custom Icon
 const icon = new L.Icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -17,7 +19,7 @@ const icon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-// Component to handle map movement
+// Map Controller
 function MapController({ selectedDistrict }) {
   const map = useMap();
   useEffect(() => {
@@ -32,6 +34,14 @@ function MapController({ selectedDistrict }) {
 }
 
 export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
+  // Filter districts that have news
+  const activeDistricts = useMemo(() => {
+    return districts.map(d => {
+      const news = getNewsByDistrict(d.id);
+      return { ...d, newsCount: news.length, topNews: news.slice(0, 3) };
+    }).filter(d => d.newsCount > 0);
+  }, []);
+
   return (
     <div className="h-full w-full relative">
        <MapContainer 
@@ -48,7 +58,7 @@ export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
         
         <MapController selectedDistrict={selectedDistrict} />
         
-        {districts.map((district) => (
+        {activeDistricts.map((district) => (
           <Marker 
             key={district.id} 
             position={[district.lat, district.lng]}
@@ -59,16 +69,31 @@ export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
               },
             }}
           >
-            <Popup>
-              <div className="text-center font-sans">
-                <h3 className="font-bold text-lg text-red-600">{district.bnName}</h3>
-                <p className="text-gray-600">{district.name}</p>
-                <button 
-                  onClick={() => onSelectDistrict(district)}
-                  className="mt-2 bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700 transition"
+            <Popup minWidth={250}>
+              <div className="font-sans p-1">
+                <div className="flex justify-between items-center mb-2 border-b pb-1">
+                   <h3 className="font-bold text-lg text-red-600">{district.bnName}</h3>
+                   <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs font-bold">
+                     {district.newsCount} টি খবর
+                   </span>
+                </div>
+                
+                <ul className="space-y-2 mb-3">
+                  {district.topNews.map(news => (
+                    <li key={news.id} className="text-sm border-b border-gray-100 pb-1 last:border-0 hover:text-red-600">
+                      <Link href={`/news/${news.category}/${news.id}`} className="line-clamp-2 leading-tight">
+                        {news.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link 
+                  href={`/saradesh/${district.id}`}
+                  className="block w-full text-center bg-red-600 text-white text-sm py-1.5 rounded hover:bg-red-700 transition"
                 >
-                  খবর দেখুন
-                </button>
+                  সব খবর দেখুন &rarr;
+                </Link>
               </div>
             </Popup>
           </Marker>
