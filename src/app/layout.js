@@ -1,4 +1,5 @@
 import './globals.css'
+import ThemeProvider from '@/components/ThemeProvider';
 
 export const metadata = {
   title: {
@@ -10,7 +11,7 @@ export const metadata = {
   authors: [{ name: 'PH Newspaper Team' }],
   creator: 'PH Newspaper',
   publisher: 'PH Newspaper',
-  metadataBase: new URL('http://localhost:3000'), // Replace with actual domain in prod
+  metadataBase: new URL('http://localhost:3000'), 
   openGraph: {
     title: 'PH Newspaper - বাংলাদেশের খবর',
     description: 'বাংলাদেশের সর্বশেষ সংবাদ, রাজনীতি, খেলাধুলা, প্রযুক্তি এবং আরও অনেক কিছু।',
@@ -18,7 +19,7 @@ export const metadata = {
     siteName: 'PH Newspaper',
     images: [
       {
-        url: '/og-image.jpg', // Placeholder
+        url: '/og-image.jpg', 
         width: 1200,
         height: 630,
         alt: 'PH Newspaper',
@@ -49,9 +50,11 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="bn">
-      <body className="antialiased min-h-screen flex flex-col">
-        {children}
+    <html lang="bn" suppressHydrationWarning>
+      <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+           {children}
+        </ThemeProvider>
       </body>
     </html>
   )

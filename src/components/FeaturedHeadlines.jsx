@@ -31,7 +31,7 @@ export default function FeaturedHeadlines() {
               </div>
 
               {/* Content */}
-              <div className="relative h-full flex flex-col justify-end p-8 text-white">
+              <div className="relative h-full flex flex-col justify-end p-8 text-white z-10">
                 {/* Category Badge */}
                 <div className="mb-4">
                   <span
@@ -90,7 +90,7 @@ export default function FeaturedHeadlines() {
               <Link
                 key={news.id}
                 href={`/news/${news.category}/${news.id}`}
-                className="group relative overflow-hidden rounded-xl shadow-lg card-hover bg-white"
+                className="group relative overflow-hidden rounded-xl shadow-lg card-hover bg-white dark:bg-slate-800 transition-colors"
               >
                 <div className="flex gap-4 p-4">
                   {/* Thumbnail */}
@@ -114,12 +114,12 @@ export default function FeaturedHeadlines() {
                     </div>
 
                     {/* Title */}
-                    <h4 className="text-lg font-bold text-gray-800 group-hover:text-red-600 transition-colors line-clamp-2 my-2">
+                    <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 my-2">
                       {news.title}
                     </h4>
 
                     {/* Meta */}
-                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
                       <span className="flex items-center gap-1">
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />

@@ -11,7 +11,7 @@ export default function LatestNewsFeed() {
     : getNewsByCategory(selectedCategory);
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
       <div className="container-custom">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
@@ -29,7 +29,7 @@ export default function LatestNewsFeed() {
               className={`px-6 py-2.5 rounded-full font-semibold transition-all ${
                 selectedCategory === 'all'
                   ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-lg scale-105'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 shadow'
+                  : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 shadow border border-transparent dark:border-slate-700'
               }`}
             >
               সব খবর
@@ -41,7 +41,7 @@ export default function LatestNewsFeed() {
                 className={`px-6 py-2.5 rounded-full font-semibold transition-all ${
                   selectedCategory === category.id
                     ? 'text-white shadow-lg scale-105'
-                    : 'bg-white text-gray-700 hover:bg-gray-100 shadow'
+                    : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 shadow border border-transparent dark:border-slate-700'
                 }`}
                 style={{
                   backgroundColor: selectedCategory === category.id ? category.color : undefined
@@ -59,13 +59,13 @@ export default function LatestNewsFeed() {
             <Link
               key={article.id}
               href={`/news/${article.category}/${article.id}`}
-              className="group bg-white rounded-xl shadow-lg overflow-hidden card-hover fade-in"
+              className="group bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden card-hover fade-in flex flex-col h-full border border-gray-100 dark:border-slate-700 transition-colors"
               style={{
                 animationDelay: `${index * 0.1}s`
               }}
             >
               {/* Image */}
-              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
+              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600 shrink-0">
                 <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-0 transition-opacity"></div>
                 
                 {/* Breaking Badge */}
@@ -95,19 +95,19 @@ export default function LatestNewsFeed() {
               </div>
 
               {/* Content */}
-              <div className="p-5">
+              <div className="p-5 flex flex-col flex-grow">
                 {/* Title */}
-                <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2">
                   {article.title}
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-gray-600 mb-4 line-clamp-2 text-sm">
+                <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 text-sm">
                   {article.excerpt}
                 </p>
 
                 {/* Meta Info */}
-                <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-100 dark:border-slate-700 mt-auto">
                   <div className="flex items-center gap-3">
                     <span className="flex items-center gap-1">
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
