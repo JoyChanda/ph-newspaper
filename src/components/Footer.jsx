@@ -86,7 +86,7 @@ export default function Footer() {
               {categories.slice(0, 6).map((category) => (
                 <li key={category.id}>
                   <Link 
-                    href={`/category/${category.id}`} 
+                    href={`/news/${category.id}`} 
                     className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
                   >
                     <span style={{ color: category.color }}>▸</span> {category.name}

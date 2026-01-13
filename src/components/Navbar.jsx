@@ -72,7 +72,7 @@ export default function Navbar() {
               {categories.map((category) => (
                 <Link
                   key={category.id}
-                  href={`/category/${category.id}`}
+                  href={`/news/${category.id}`}
                   className="px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all"
                   style={{
                     '--hover-color': category.color
@@ -113,7 +113,7 @@ export default function Navbar() {
               {categories.map((category) => (
                 <Link
                   key={category.id}
-                  href={`/category/${category.id}`}
+                  href={`/news/${category.id}`}
                   className="px-4 py-3 rounded-lg font-semibold text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

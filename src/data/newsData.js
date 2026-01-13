@@ -10,9 +10,8 @@ export const categories = [
   { id: 'health', name: 'স্বাস্থ্য', color: '#059669' },
 ];
 
-// Sample News Data
-export const newsArticles = [
-  // Breaking News
+// Base News Data
+const baseArticles = [
   {
     id: 1,
     category: 'politics',
@@ -55,8 +54,6 @@ export const newsArticles = [
     views: 12890,
     readTime: '৬ মিনিট'
   },
-  
-  // Featured News
   {
     id: 4,
     category: 'business',
@@ -99,8 +96,6 @@ export const newsArticles = [
     views: 11230,
     readTime: '৭ মিনিট'
   },
-
-  // Latest News
   {
     id: 7,
     category: 'education',
@@ -184,8 +179,26 @@ export const newsArticles = [
     isFeatured: false,
     views: 4890,
     readTime: '৫ মিনিট'
-  },
+  }
 ];
+
+// Generate more data for pagination testing
+const generateMoreNews = () => {
+  const extra = [];
+  for (let i = 1; i <= 40; i++) {
+    const original = baseArticles[i % baseArticles.length];
+    extra.push({
+      ...original,
+      id: 100 + i,
+      title: `${original.title} - পর্ব ${i}`,
+      views: Math.floor(Math.random() * 50000) + 1000,
+      date: `২০২৬-০১-${(10 - (i % 10)).toString().padStart(2, '0')}` // Random dates in Jan
+    });
+  }
+  return extra;
+};
+
+export const newsArticles = [...baseArticles, ...generateMoreNews()];
 
 // Helper Functions
 export const getBreakingNews = () => {
