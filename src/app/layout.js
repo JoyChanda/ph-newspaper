@@ -52,7 +52,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="bn" suppressHydrationWarning>
-      <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+      <body 
+        className="antialiased min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300"
+        suppressHydrationWarning
+      >
         <LanguageProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
              {children}
