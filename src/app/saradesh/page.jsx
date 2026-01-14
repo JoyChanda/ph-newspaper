@@ -6,7 +6,8 @@ import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { districts } from '@/data/districts';
+import BreakingNews from '@/components/BreakingNews';
+import { districts, getDistrictById } from '@/data/districts';
 import { getNewsByDistrict, getTranslatedArticle } from '@/data/newsData';
 import { useLanguage } from '@/context/LanguageContext';
 import { translations } from '@/data/translations';
@@ -51,8 +52,9 @@ export default function SaraDeshPage() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-slate-950 flex flex-col transition-colors duration-300">
       <Navbar />
+      <BreakingNews />
 
-      <div className="flex-1 container-custom py-8">
+      <div className="flex-1 container-custom py-16">
         <div className="grid lg:grid-cols-3 gap-8 h-[800px] lg:h-[600px]">
           
           {/* Left Side: Map & Search */}

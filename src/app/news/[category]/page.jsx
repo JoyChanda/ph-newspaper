@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BreakingNews from '@/components/BreakingNews';
 import { getNewsByCategory, getCategoryById, getTranslatedArticle } from '@/data/newsData';
 import { useLanguage } from '@/context/LanguageContext';
 import { translations } from '@/data/translations';
@@ -60,10 +61,11 @@ export default function CategoryListingPage({ params: paramsPromise, searchParam
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
+      <BreakingNews />
 
-      {/* Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
-        <div className="container-custom py-10">
+      {/* Header Section */}
+      <div className="container-custom py-8">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 transition-all duration-300 p-8 md:p-12">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div>
               <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
@@ -80,12 +82,12 @@ export default function CategoryListingPage({ params: paramsPromise, searchParam
             </div>
 
             {/* Sorting Controls */}
-            <div className="flex items-center gap-2 bg-gray-100 dark:bg-slate-800 p-1.5 rounded-xl shadow-inner self-start">
+            <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-800/50 p-2 rounded-2xl shadow-inner self-start">
                <Link
                  href={`/news/${category}?sort=date&page=1`}
-                 className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+                 className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${
                    sortOption === 'date' 
-                     ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-md transform scale-105' 
+                     ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-lg transform scale-105' 
                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                  }`}
                >
@@ -93,9 +95,9 @@ export default function CategoryListingPage({ params: paramsPromise, searchParam
                </Link>
                <Link
                  href={`/news/${category}?sort=popularity&page=1`}
-                 className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+                 className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all ${
                    sortOption === 'popularity' 
-                     ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-md transform scale-105' 
+                     ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-lg transform scale-105' 
                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                  }`}
                >

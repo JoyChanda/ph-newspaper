@@ -18,8 +18,8 @@ export default function NewsPage() {
       <BreakingNews />
       
       {/* Breadcrumb & Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
-        <div className="container-custom py-8">
+      <div className="container-custom py-8">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 transition-all duration-300 p-8 md:p-12">
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
              <Link href="/" className="hover:text-red-600 transition-colors">{t.home}</Link> 
              <span>/</span> 

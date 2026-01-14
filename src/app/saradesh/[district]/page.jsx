@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BreakingNews from '@/components/BreakingNews';
 import DistrictStatsChart from '@/components/DistrictStatsChart';
 import { getDistrictById } from '@/data/districts';
 import { getNewsByDistrict, getDistrictStats, getCategoryById, categories, getTranslatedArticle } from '@/data/newsData';
@@ -63,15 +64,16 @@ export default function DistrictDetailPage({ params: paramsPromise, searchParams
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
+      <BreakingNews />
       
       {/* Header Section */}
-      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
-        <div className="container-custom py-8">
+      <div className="container-custom py-8">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 transition-all duration-300 p-8 md:p-12">
            <div className="flex flex-col md:flex-row gap-8 items-start">
               
               {/* Title & Info */}
               <div className="flex-1">
-                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
                     <Link href="/" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">{t.home}</Link> 
                     <span>/</span>
                     <Link href="/saradesh" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">{t.saraDesh}</Link> 
