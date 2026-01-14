@@ -28,7 +28,7 @@ const baseArticles = [
       author: "Abdul Karim",
       readTime: "5 mins"
     },
-    image: '/images/politics-1.jpg',
+    image: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&q=80&w=800',
     author: 'আব্দুল করিম',
     date: '২০২৬-০১-১৪',
     isBreaking: true,
@@ -50,7 +50,7 @@ const baseArticles = [
       author: "Rafiqul Islam",
       readTime: "4 mins"
     },
-    image: '/images/sports-1.jpg',
+    image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&q=80&w=800',
     author: 'রফিকুল ইসলাম',
     date: '২০২৬-০১-১৪',
     isBreaking: true,
@@ -72,7 +72,7 @@ const baseArticles = [
       author: "Tanvir Ahmed",
       readTime: "6 mins"
     },
-    image: '/images/tech-1.jpg',
+    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800',
     author: 'তানভীর আহমেদ',
     date: '২০২৬-০১-১৪',
     isBreaking: true,
@@ -94,7 +94,7 @@ const baseArticles = [
       author: "Najmul Huq",
       readTime: "5 mins"
     },
-    image: '/images/business-1.jpg',
+    image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800',
     author: 'নাজমুল হক',
     date: '২০২৬-০১-১৩',
     isBreaking: false,
@@ -116,7 +116,7 @@ const baseArticles = [
       author: "Sadia Islam",
       readTime: "4 mins"
     },
-    image: '/images/entertainment-1.jpg',
+    image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=800',
     author: 'সাদিয়া ইসলাম',
     date: '২০২৬-০১-১৩',
     isBreaking: false,
@@ -138,7 +138,7 @@ const baseArticles = [
       author: "Farhana Rahman",
       readTime: "7 mins"
     },
-    image: '/images/international-1.jpg',
+    image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=800',
     author: 'ফারহানা রহমান',
     date: '২০২৬-০১-১৩',
     isBreaking: false,
@@ -160,7 +160,7 @@ const baseArticles = [
       author: "Mahmuda Akhter",
       readTime: "3 mins"
     },
-    image: '/images/education-1.jpg',
+    image: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=800',
     author: 'মাহমুদা আক্তার',
     date: '২০২৬-০১-১৩',
     isBreaking: false,
@@ -182,7 +182,7 @@ const baseArticles = [
       author: "Dr. Rashedul Islam",
       readTime: "5 mins"
     },
-    image: '/images/health-1.jpg',
+    image: 'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=800',
     author: 'ডা. রাশেদুল ইসলাম',
     date: '২০২৬-০১-১২',
     isBreaking: false,
@@ -204,7 +204,7 @@ const baseArticles = [
       author: "Kamrul Hasan",
       readTime: "4 mins"
     },
-    image: '/images/sports-2.jpg',
+    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800',
     author: 'কামরুল হাসান',
     date: '২০২৬-০১-১২',
     isBreaking: false,
@@ -226,7 +226,7 @@ const baseArticles = [
       author: "Sakib Hossain",
       readTime: "4 mins"
     },
-    image: '/images/tech-2.jpg',
+    image: 'https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&q=80&w=800',
     author: 'সাকিব হোসেন',
     date: '২০২৬-০১-১২',
     isBreaking: false,
@@ -248,7 +248,7 @@ const baseArticles = [
       author: "Zahid Hasan",
       readTime: "6 mins"
     },
-    image: '/images/politics-2.jpg',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=800',
     author: 'জাহিদ হাসান',
     date: '২০২৬-০১-১১',
     isBreaking: false,
@@ -270,7 +270,7 @@ const baseArticles = [
       author: "Alamgir Kabir",
       readTime: "5 mins"
     },
-    image: '/images/business-2.jpg',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
     author: 'আলমগীর কবির',
     date: '২০২৬-০১-১১',
     isBreaking: false,

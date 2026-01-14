@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -127,18 +128,26 @@ export default function NewsDetailPage({ params: paramsPromise }) {
               <span>{article.readTime} {language === 'bn' ? 'পড়ার সময়' : 'read time'}</span>
             </div>
           </div>
+          
+          {/* Main Featured Image */}
+          {article.image && (
+            <div className="relative h-[400px] md:h-[500px] w-full mb-10 overflow-hidden rounded-2xl shadow-xl">
+              <Image
+                src={article.image}
+                alt={article.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
 
-          {/* Featured Image */}
-          <div className="relative h-96 rounded-2xl overflow-hidden mb-8 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 shadow-2xl">
-            <div className="absolute inset-0 flex items-center justify-center text-white text-6xl">
-              📰
+          {/* Fallback if no image */}
+          {!article.image && (
+            <div className="relative h-64 rounded-2xl overflow-hidden mb-8 bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-dashed border-slate-300 dark:border-slate-700">
+              <div className="text-slate-400 text-6xl">📰</div>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                 <p className="text-white text-sm text-center">
-                   {language === 'bn' ? 'ছবির প্রতিনিধি:' : 'Image representation for:'} {article.title}
-                 </p>
-            </div>
-          </div>
+          )}
 
           {/* Article Content */}
           <div className="prose prose-lg max-w-none dark:prose-invert">
@@ -216,8 +225,14 @@ export default function NewsDetailPage({ params: paramsPromise }) {
                   href={`/news/${news.category}/${news.id}`}
                   className="group bg-gray-50 dark:bg-slate-900 rounded-xl shadow-lg overflow-hidden card-hover transition-colors"
                 >
-                  <div className="relative h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
-                    <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-0 transition-opacity"></div>
+                  <div className="relative aspect-video bg-gray-200 dark:bg-slate-800">
+                    <Image
+                      src={news.image || '/images/default-news.jpg'}
+                      alt={news.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:opacity-0 transition-opacity"></div>
                   </div>
                   <div className="p-5">
                     <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 mb-2">

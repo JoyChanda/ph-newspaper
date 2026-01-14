@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -174,10 +175,15 @@ export default function DistrictDetailPage({ params: paramsPromise, searchParams
                  href={`/news/${article.category}/${article.id}`}
                  className="group bg-white dark:bg-slate-900 rounded-xl shadow-md border border-gray-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all card-hover"
                >
-                  <div className="h-48 bg-gray-200 dark:bg-slate-800 relative overflow-hidden">
-                     <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 dark:from-slate-700 dark:to-slate-600 group-hover:scale-110 transition-transform duration-500"></div>
+                  <div className="aspect-video bg-gray-200 dark:bg-slate-800 relative overflow-hidden">
+                     <Image
+                        src={article.image || '/images/default-news.jpg'}
+                        alt={article.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                     />
                      <span 
-                        className="absolute top-3 left-3 bg-black/60 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full backdrop-blur-md"
+                        className="absolute top-3 left-3 bg-black/60 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full backdrop-blur-md z-10"
                         style={{ borderLeft: `3px solid ${getCategoryById(article.category)?.color}` }}
                       >
                         {t.categories[article.category] || article.category}

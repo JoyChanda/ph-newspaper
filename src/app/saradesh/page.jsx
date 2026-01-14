@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -132,9 +133,13 @@ export default function SaraDeshPage() {
                     className="block group"
                   >
                     <div className="flex gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                       <div className="w-20 h-20 bg-gray-200 dark:bg-slate-700 rounded-lg overflow-hidden flex-shrink-0">
-                          {/* Placeholder Image */}
-                          <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-slate-600 dark:to-slate-500 group-hover:scale-110 transition-transform duration-500"></div>
+                       <div className="w-20 h-20 bg-gray-200 dark:bg-slate-700 rounded-lg overflow-hidden flex-shrink-0 relative">
+                          <Image
+                             src={news.image || '/images/default-news.jpg'}
+                             alt={news.title}
+                             fill
+                             className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
                        </div>
                        <div className="flex-1">
                           <span className="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-full mb-1 inline-block">

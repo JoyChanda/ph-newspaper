@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { categories, getNewsByCategory, getCategoryById, getTranslatedArticle } from '@/data/newsData';
 import { useLanguage } from '@/context/LanguageContext';
@@ -72,8 +73,14 @@ export default function LatestNewsFeed() {
               }}
             >
               {/* Image */}
-              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600 shrink-0">
-                <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-0 transition-opacity"></div>
+              <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0">
+                <Image
+                  src={article.image || '/images/default-news.jpg'}
+                  alt={article.title}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:opacity-0 transition-opacity"></div>
                 
                 {/* Breaking Badge */}
                 {article.isBreaking && (

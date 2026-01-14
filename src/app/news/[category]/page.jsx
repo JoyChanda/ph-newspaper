@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -115,9 +116,14 @@ export default function CategoryListingPage({ params: paramsPromise, searchParam
                href={`/news/${article.category}/${article.id}`}
                className="group flex flex-col md:flex-row gap-6 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-slate-800"
              >
-                <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-800">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 dark:from-slate-700 dark:to-slate-600 group-hover:scale-105 transition-transform duration-500"></div>
-                  <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 text-xs rounded backdrop-blur-sm">
+                <div className="relative w-full md:w-64 aspect-video md:aspect-auto md:h-full flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-800">
+                  <Image
+                    src={article.image || '/images/default-news.jpg'}
+                    alt={article.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 text-[10px] font-bold uppercase rounded backdrop-blur-sm z-10">
                     {t.categories[article.category] || article.category}
                   </div>
                 </div>

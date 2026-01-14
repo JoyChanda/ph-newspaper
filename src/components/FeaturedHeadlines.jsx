@@ -32,8 +32,15 @@ export default function FeaturedHeadlines() {
               className="group relative overflow-hidden rounded-2xl shadow-2xl card-hover h-[500px]"
             >
               {/* Background Image */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-purple-900">
-                <div className="absolute inset-0 bg-black opacity-40 group-hover:opacity-30 transition-opacity"></div>
+              <div className="absolute inset-0 bg-slate-200 dark:bg-slate-700">
+                  <Image
+                    src={mainNews.image || '/images/default-news.jpg'}
+                    alt={mainNews.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    priority
+                  />
+                <div className="absolute inset-0 bg-black/40 group-hover:opacity-30 transition-opacity"></div>
               </div>
 
               {/* Content */}
@@ -100,8 +107,14 @@ export default function FeaturedHeadlines() {
               >
                 <div className="flex gap-4 p-4">
                   {/* Thumbnail */}
-                  <div className="relative w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
-                    <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-0 transition-opacity"></div>
+                  <div className="relative w-32 aspect-square md:aspect-video flex-shrink-0 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700">
+                    <Image
+                      src={news.image || '/images/default-news.jpg'}
+                      alt={news.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:opacity-0 transition-opacity"></div>
                   </div>
 
                   {/* Content */}
