@@ -1,46 +1,74 @@
-# 📰 PH Newspaper - বাংলাদেশের খবর
+# 📰 PH Newspaper - Modern Online Portal
 
-এটি একটি বাংলাদেশভিত্তিক আধুনিক অনলাইন নিউজ পোর্টাল, যা Next.js এবং Tailwind CSS দিয়ে তৈরি করা হয়েছে।
+**PH Newspaper** is a premium, fully responsive, and bilingual news portal built for the digital age. It features real-time-like news updates, a global theme switcher, and an interactive geographical map for regional news.
 
-## ✨ বৈশিষ্ট্যসমূহ
-
-- **🔥 Breaking News Ticker**: সর্বশেষ গুরুত্বপূর্ণ খবরের জন্য স্ক্রলিং টিকার।
-- **⭐ Featured Headlines**: প্রিমিয়াম ডিজাইনের প্রধান খবরের সেকশন।
-- **🆕 Latest News Feed**: ক্যাটাগরি ফিল্টারিং সহ সর্বশেষ খবরের তালিকা।
-- **🗂️ Category-wise Filtering**: রাজনীতি, খেলাধুলা, প্রযুক্তি, বিনোদন ইত্যাদি বিভিন্ন বিভাগের খবর।
-- **📱 Responsive Design**: মোবাইল, ট্যাবলেট এবং ডেস্কটপ সব ডিভাইসের জন্য অপ্টিমাইজড।
-- **⚡ SEO Friendly**: প্রতিটি পেজের জন্য ডায়নামিক মেটাডেটা এবং সার্ভার সাইড রেন্ডারিং।
-- **🎨 Modern UI**: গ্লাস ইফেক্ট, গ্রেডিয়েন্ট এবং স্মুথ অ্যানিমেশন।
-
-## 🛠️ টেকনোলজি স্ট্যাক
-
-- **Framework**: Next.js 16 (App Router)
-- **Styling**: Tailwind CSS v4
-- **Language**: JavaScript
-- **Font**: Noto Sans Bengali & Inter
-
-## 🚀 প্রজেক্ট রান করার নিয়ম
-
-প্রথমে ডিপেনডেন্সি ইনস্টল করুন:
-
-```bash
-npm install
-```
-
-তারপর ডেভেলপমেন্ট সার্ভার চালু করুন:
-
-```bash
-npm run dev
-```
-
-ব্রাউজারে [http://localhost:3000](http://localhost:3000) ভিজিট করুন।
-
-## 📂 প্রোজেক্ট স্ট্রাকচার
-
-- `src/app`: মেইন অ্যাপ্লিকেশন পেজ এবং রাউটিং।
-- `src/components`: রিইউজেবল কম্পোনেন্ট (Navbar, BreakingNews, Footer ইত্যাদি)।
-- `src/data`: মক বা স্যাম্পল ডাটা (`newsData.js`)।
-- `src/app/globals.css`: গ্লোবাল স্টাইল এবং কাস্টম অ্যানিমেশন।
+Live Link: [ph-newspaper-three.vercel.app](https://ph-newspaper-three.vercel.app)
 
 ---
-Made with ❤️ in Bangladesh
+
+## 📸 Portal Preview
+
+| Light Mode | Dark Mode |
+| :---: | :---: |
+| ![Light Mode](./public/screenshots/light_mode.png) | ![Dark Mode](./public/screenshots/dark_mode.png) |
+
+---
+
+## ✨ Key Features
+
+- **🌗 Global Theme Toggle**: Seamless switching between premium Dark and Light modes with persistent state.
+- **🌐 Bilingual Support**: full internationalization for English and Bangla (বাংলা), including dynamic dates and number formatting.
+- **🗺️ Interactive "Sara Desh" Map**: A Geographical news interface featuring a thematic Bangladesh map with district-wise news filtering.
+- **🔥 Breaking News Ticker**: A continuous scrolling ticker for urgent headlines with pause-on-hover functionality.
+- **📊 Dynamic Visuals**: Real-time district statistics charts using Recharts.
+- **📱 Ultra Responsive**: Optimized for everything from small mobiles to large 4K displays.
+- **⚡ SEO & Performance**: High-performance rendering with Next.js App Router and dynamic metadata.
+
+---
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose |
+| :--- | :--- |
+| **Next.js 15+** | Core Framework (App Router, Server Actions) |
+| **React 19** | UI Library & Hooks |
+| **Tailwind CSS v4** | Modern Utility-first Styling & Dark Mode |
+| **Context API** | Global State Management (Language & Theme) |
+| **Leaflet & React-Leaflet** | Interactive Map Engine |
+| **Recharts** | Data Visualization (District Stats) |
+| **Next-Themes** | Efficient Theme Handling |
+| **MongoDB** | Database for scalable news content |
+
+---
+
+## 🚀 Installation & Local Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/JoyChanda/ph-newspaper
+   cd ph-newspaper
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup:**
+   Create a `.env` file in the root directory and add:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to see the magic.
+
+---
+
+## 📄 License & Attribution
+
+**© 2026 PH Newspaper (Team JC)**   
+All rights reserved. Designed and developed with ❤️ for the community.
