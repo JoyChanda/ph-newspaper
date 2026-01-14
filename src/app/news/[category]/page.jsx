@@ -1,42 +1,38 @@
+'use client';
+
 import Link from 'next/link';
+import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { getNewsByCategory, getCategoryById } from '@/data/newsData';
+import { getNewsByCategory, getCategoryById, getTranslatedArticle } from '@/data/newsData';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
-export async function generateMetadata({ params }) {
-  const { category } = await params;
-  const catData = getCategoryById(category);
-  
-  if (!catData) {
-    return {
-      title: 'বিভাগ পাওয়া যায়নি | PH Newspaper',
-    };
-  }
+export default function CategoryListingPage({ params: paramsPromise, searchParams: searchParamsPromise }) {
+  const params = use(paramsPromise);
+  const searchParams = use(searchParamsPromise);
+  const { category } = params;
+  const { language } = useLanguage();
+  const t = translations[language];
 
-  return {
-    title: `${catData.name} - সব খবর | PH Newspaper`,
-    description: `${catData.name} বিভাগের সর্বশেষ খবর, বিশ্লেষণ এবং আপডেট।`,
-  };
-}
-
-export default async function CategoryListingPage({ params, searchParams }) {
-  const { category } = await params;
-  const query = await searchParams;
-  const currentPage = parseInt(query?.page) || 1;
-  const sortOption = query?.sort || 'date'; // 'date' | 'popularity'
+  const currentPage = parseInt(searchParams?.page) || 1;
+  const sortOption = searchParams?.sort || 'date'; // 'date' | 'popularity'
   
   const catData = getCategoryById(category);
   
   // Logic: Get filtered news
   let news = getNewsByCategory(category);
 
-  if (!catData && category !== 'all') { // Optional: handle 'all' if routed here
-     // If category doesn't exist
+  if (!catData && category !== 'all') {
      return (
-       <div className="min-h-screen flex items-center justify-center">
+       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">বিভাগ পাওয়া যায়নি</h1>
-            <Link href="/" className="text-red-600 hover:underline">হোমে ফিরে যান</Link>
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+              {language === 'bn' ? 'বিভাগ পাওয়া যায়নি' : 'Category Not Found'}
+            </h1>
+            <Link href="/" className="text-red-600 hover:underline">
+              {language === 'bn' ? 'হোমে ফিরে যান' : 'Back to Home'}
+            </Link>
          </div>
        </div>
      );
@@ -47,7 +43,6 @@ export default async function CategoryListingPage({ params, searchParams }) {
     if (sortOption === 'popularity') {
       return b.views - a.views;
     }
-    // Default: Date
     return new Date(b.date) - new Date(a.date);
   });
 
@@ -56,47 +51,54 @@ export default async function CategoryListingPage({ params, searchParams }) {
   const totalItems = news.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentNews = news.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentNewsRaw = news.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentNews = currentNewsRaw.map(article => getTranslatedArticle(article, language));
+
+  const translatedCatName = t.categories[category] || catData?.name || (language === 'bn' ? 'সকল বিভাগ' : 'All Categories');
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-12">
-        <div className="container-custom">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
+        <div className="container-custom py-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div>
-              <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-                <Link href="/" className="hover:text-white transition-colors">হোম</Link>
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <Link href="/" className="hover:text-red-500 transition-colors">{t.home}</Link>
                 <span>/</span>
-                <span className="text-white font-semibold">{catData.name}</span>
+                <span className="text-gray-900 dark:text-gray-100 font-semibold">{translatedCatName}</span>
               </div>
-              <h1 className="text-4xl font-bold">{catData.name}</h1>
-              <p className="text-gray-300 mt-2">মোট {totalItems} টি খবর</p>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight">{translatedCatName}</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-2 text-lg">
+                {language === 'bn' 
+                  ? `মোট ${totalItems.toLocaleString('bn-BD')} টি খবর` 
+                  : `Total ${totalItems.toLocaleString()} news articles`}
+              </p>
             </div>
 
             {/* Sorting Controls */}
-            <div className="flex items-center gap-3 bg-white/10 p-1 rounded-lg backdrop-blur-sm self-start">
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-slate-800 p-1.5 rounded-xl shadow-inner self-start">
                <Link
                  href={`/news/${category}?sort=date&page=1`}
-                 className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                 className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
                    sortOption === 'date' 
-                     ? 'bg-white text-gray-900 shadow-lg' 
-                     : 'text-white hover:bg-white/10'
+                     ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-md transform scale-105' 
+                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                  }`}
                >
-                 সর্বশেষ
+                 {language === 'bn' ? 'সর্বশেষ' : 'Latest'}
                </Link>
                <Link
                  href={`/news/${category}?sort=popularity&page=1`}
-                 className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+                 className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
                    sortOption === 'popularity' 
-                     ? 'bg-white text-gray-900 shadow-lg' 
-                     : 'text-white hover:bg-white/10'
+                     ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-md transform scale-105' 
+                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                  }`}
                >
-                 জনপ্রিয়
+                 {language === 'bn' ? 'জনপ্রিয়' : 'Popular'}
                </Link>
             </div>
           </div>
@@ -111,29 +113,28 @@ export default async function CategoryListingPage({ params, searchParams }) {
              <Link
                key={article.id}
                href={`/news/${article.category}/${article.id}`}
-               className="group flex flex-col md:flex-row gap-6 bg-white p-4 rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100"
+               className="group flex flex-col md:flex-row gap-6 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-slate-800"
              >
-                <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
-                  {/* Pseudo Image */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 group-hover:scale-105 transition-transform duration-500"></div>
+                <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-800">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 dark:from-slate-700 dark:to-slate-600 group-hover:scale-105 transition-transform duration-500"></div>
                   <div className="absolute top-2 left-2 bg-black/60 text-white px-2 py-1 text-xs rounded backdrop-blur-sm">
-                    {article.category}
+                    {t.categories[article.category] || article.category}
                   </div>
                 </div>
                 
                 <div className="flex-1 flex flex-col justify-center">
-                   <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
+                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                      {article.title}
                    </h3>
-                   <p className="text-gray-600 mb-4 line-clamp-2 text-sm">
+                   <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 text-sm">
                      {article.excerpt}
                    </p>
-                   <div className="flex items-center gap-4 text-xs text-gray-500 mt-auto">
+                   <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500 mt-auto">
                       <span className="flex items-center gap-1">
                         📅 {article.date}
                       </span>
                       <span className="flex items-center gap-1">
-                        👁️ {article.views.toLocaleString('bn-BD')}
+                        👁️ {language === 'bn' ? article.views.toLocaleString('bn-BD') : article.views.toLocaleString()}
                       </span>
                       <span className="flex items-center gap-1">
                         ⏱️ {article.readTime}
@@ -146,8 +147,10 @@ export default async function CategoryListingPage({ params, searchParams }) {
 
         {/* Empty State */}
         {currentNews.length === 0 && (
-           <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
-              <p className="text-xl text-gray-500">কোনো খবর পাওয়া যায়নি</p>
+           <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-xl border border-dashed border-gray-300 dark:border-slate-700">
+              <p className="text-xl text-gray-500 dark:text-gray-400">
+                {language === 'bn' ? 'কোনো খবর পাওয়া যায়নি' : 'No news found'}
+              </p>
            </div>
         )}
 
@@ -158,9 +161,9 @@ export default async function CategoryListingPage({ params, searchParams }) {
             {currentPage > 1 && (
               <Link
                 href={`/news/${category}?sort=${sortOption}&page=${currentPage - 1}`}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700"
+                className="px-4 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 transition-colors"
               >
-                ← আগের পেজ
+                {language === 'bn' ? '← আগের পেজ' : '← Previous Page'}
               </Link>
             )}
 
@@ -174,10 +177,10 @@ export default async function CategoryListingPage({ params, searchParams }) {
                   className={`w-10 h-10 flex items-center justify-center rounded-lg font-bold transition-all ${
                     p === currentPage
                       ? 'bg-red-600 text-white shadow-lg'
-                      : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                      : 'bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800'
                   }`}
                 >
-                  {p.toLocaleString('bn-BD')}
+                  {language === 'bn' ? p.toLocaleString('bn-BD') : p}
                 </Link>
               );
             })}
@@ -186,9 +189,9 @@ export default async function CategoryListingPage({ params, searchParams }) {
             {currentPage < totalPages && (
               <Link
                 href={`/news/${category}?sort=${sortOption}&page=${currentPage + 1}`}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700"
+                className="px-4 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 transition-colors"
               >
-                পরের পেজ →
+                {language === 'bn' ? 'পরের পেজ →' : 'Next Page →'}
               </Link>
             )}
           </div>

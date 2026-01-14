@@ -2,10 +2,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { getFeaturedNews, getCategoryById } from '@/data/newsData';
+import { getFeaturedNews, getCategoryById, getTranslatedArticle } from '@/data/newsData';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
 export default function FeaturedHeadlines() {
-  const featuredNews = getFeaturedNews();
+  const { language } = useLanguage();
+  const t = translations[language];
+  const featuredNewsRaw = getFeaturedNews();
+  const featuredNews = featuredNewsRaw.map(news => getTranslatedArticle(news, language));
+  
   const mainNews = featuredNews[0];
   const sideNews = featuredNews.slice(1, 4);
 
@@ -15,7 +21,7 @@ export default function FeaturedHeadlines() {
         {/* Section Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="h-8 w-1 bg-gradient-to-b from-red-600 to-blue-600 rounded-full"></div>
-          <h2 className="text-3xl md:text-4xl font-bold gradient-text">বিশেষ শিরোনাম</h2>
+          <h2 className="text-3xl md:text-4xl font-bold gradient-text">{t.featuredNews}</h2>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -41,7 +47,7 @@ export default function FeaturedHeadlines() {
                       color: 'white'
                     }}
                   >
-                    {getCategoryById(mainNews.category)?.name}
+                    {t.categories[mainNews.category] || getCategoryById(mainNews.category)?.name}
                   </span>
                 </div>
 
@@ -69,12 +75,12 @@ export default function FeaturedHeadlines() {
                     </svg>
                     {mainNews.date}
                   </span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1" suppressHydrationWarning>
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                       <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                     </svg>
-                    {mainNews.views.toLocaleString('bn-BD')}
+                    {language === 'bn' ? mainNews.views.toLocaleString('bn-BD') : mainNews.views.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -109,7 +115,7 @@ export default function FeaturedHeadlines() {
                           color: getCategoryById(news.category)?.color
                         }}
                       >
-                        {getCategoryById(news.category)?.name}
+                        {t.categories[news.category] || getCategoryById(news.category)?.name}
                       </span>
                     </div>
 
@@ -126,12 +132,12 @@ export default function FeaturedHeadlines() {
                         </svg>
                         {news.date}
                       </span>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1" suppressHydrationWarning>
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                           <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                         </svg>
-                        {news.views.toLocaleString('bn-BD')}
+                        {language === 'bn' ? news.views.toLocaleString('bn-BD') : news.views.toLocaleString()}
                       </span>
                     </div>
                   </div>

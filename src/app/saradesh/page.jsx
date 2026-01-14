@@ -6,7 +6,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { districts } from '@/data/districts';
-import { getNewsByDistrict } from '@/data/newsData';
+import { getNewsByDistrict, getTranslatedArticle } from '@/data/newsData';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
 // Dynamically import Map component to avoid SSR issues with Leaflet
 const BangladeshMap = dynamic(() => import('@/components/Map/BangladeshMap'), {
@@ -19,6 +21,8 @@ const BangladeshMap = dynamic(() => import('@/components/Map/BangladeshMap'), {
 });
 
 export default function SaraDeshPage() {
+  const { language } = useLanguage();
+  const t = translations[language];
   const [selectedDistrict, setSelectedDistrict] = useState(districts[0]); // Default Dhaka
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -40,7 +44,8 @@ export default function SaraDeshPage() {
   };
 
   // Get news for selected district
-  const districtNews = getNewsByDistrict(selectedDistrict.id);
+  const districtNewsRaw = getNewsByDistrict(selectedDistrict.id);
+  const districtNews = districtNewsRaw.map(news => getTranslatedArticle(news, language));
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-slate-950 flex flex-col transition-colors duration-300">
@@ -57,7 +62,7 @@ export default function SaraDeshPage() {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="জেলা খুঁজুন... (e.g. Dhaka or ঢাকা)"
+                  placeholder={language === 'bn' ? "জেলা খুঁজুন... (যেমন: ঢাকা বা Dhaka)" : "Search district... (e.g. Dhaka)"}
                   className="w-full pl-12 pr-4 py-3 rounded-full shadow-lg border-2 border-transparent focus:border-red-500 focus:outline-none bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm transition-all text-gray-800 dark:text-white"
                   value={searchQuery}
                   onChange={(e) => {
@@ -79,8 +84,8 @@ export default function SaraDeshPage() {
                         className="w-full text-left px-4 py-3 hover:bg-red-50 dark:hover:bg-slate-800 hover:text-red-600 transition-colors border-b last:border-b-0 border-gray-100 dark:border-slate-800 flex justify-between items-center text-gray-700 dark:text-gray-200"
                         onClick={() => handleSelectDistrict(district)}
                       >
-                        <span className="font-semibold">{district.bnName}</span>
-                        <span className="text-xs text-gray-400">{district.name}</span>
+                        <span className="font-semibold">{language === 'bn' ? district.bnName : district.name}</span>
+                        <span className="text-xs text-gray-400">{language === 'bn' ? district.name : district.bnName}</span>
                       </button>
                     ))}
                   </div>
@@ -96,7 +101,9 @@ export default function SaraDeshPage() {
                />
             </div>
             <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-               মানচিত্রের যেকোনো জেলায় ক্লিক করুন অথবা সার্চ বক্সে জেলার নাম লিখুন
+               {language === 'bn' 
+                 ? "মানচিত্রের যেকোনো জেলায় ক্লিক করুন অথবা সার্চ বক্সে জেলার নাম লিখুন" 
+                 : "Click on any district on the map or type the district name in the search box"}
             </p>
           </div>
 
@@ -104,15 +111,17 @@ export default function SaraDeshPage() {
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-800 flex flex-col overflow-hidden h-full">
             {/* District Header */}
             <div className="p-6 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-red-600 to-red-700 text-white">
-              <h4 className="text-xs font-bold opacity-80 uppercase tracking-widest mb-1">SARA DESH</h4>
-              <h2 className="text-3xl font-bold">{selectedDistrict?.bnName}</h2>
-              <p className="text-sm opacity-90 mt-1">{selectedDistrict?.name} District</p>
+              <h4 className="text-xs font-bold opacity-80 uppercase tracking-widest mb-1">{t.saraDesh}</h4>
+              <h2 className="text-3xl font-bold">{language === 'bn' ? selectedDistrict?.bnName : selectedDistrict?.name}</h2>
+              <p className="text-sm opacity-90 mt-1">{language === 'bn' ? `${selectedDistrict?.name} জেলা` : `${selectedDistrict?.name} District`}</p>
             </div>
 
             {/* News List */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
               <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                এই জেলার সর্বশেষ সংবাদ ({districtNews.length})
+                {language === 'bn' 
+                  ? `এই জেলার সর্বশেষ সংবাদ (${districtNews.length})` 
+                  : `Latest news from this district (${districtNews.length})`}
               </div>
               
               {districtNews.length > 0 ? (
@@ -129,10 +138,10 @@ export default function SaraDeshPage() {
                        </div>
                        <div className="flex-1">
                           <span className="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-full mb-1 inline-block">
-                            {news.category}
+                            {t.categories[news.category] || news.category}
                           </span>
                           <h3 className="font-bold text-gray-800 dark:text-gray-200 text-sm leading-snug group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2">
-                            {news.title}
+                             {news.title}
                           </h3>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
                              <span>🕒 {news.date}</span>
@@ -143,7 +152,7 @@ export default function SaraDeshPage() {
                 ))
               ) : (
                 <div className="text-center py-10 text-gray-400 dark:text-gray-500">
-                   এই জেলার জন্য কোনো খবর পাওয়া যায়নি।
+                   {language === 'bn' ? "এই জেলার জন্য কোনো খবর পাওয়া যায়নি।" : "No news found for this district."}
                 </div>
               )}
 
@@ -151,7 +160,7 @@ export default function SaraDeshPage() {
                 href={`/saradesh/${selectedDistrict.id}`}
                 className="w-full block text-center py-2.5 mt-4 text-sm font-bold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/30 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
               >
-                আরও দেখুন
+                {language === 'bn' ? "আরও দেখুন" : "View More"}
               </Link>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import './globals.css'
 import ThemeProvider from '@/components/ThemeProvider';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export const metadata = {
   title: {
@@ -31,7 +32,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'PH Newspaper - বাংলাদেশের খবর',
-    description: 'বাংলাদেশের সর্বশেষ সংবাদ, রাজনীতি, খেলাধুলা, প্রযুক্তি এবং আরও অনেক কিছু।',
+    description: 'বাংলাদেশের সর্বশেষ সংবাদ, রাজনীতি, খেলাধুলা, প্রযুক্তি and আরও অনেক কিছু।',
     images: ['/og-image.jpg'],
     creator: '@phnewspaper',
   },
@@ -52,9 +53,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="bn" suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-           {children}
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+             {children}
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   )

@@ -2,13 +2,20 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { categories, getNewsByCategory, getCategoryById } from '@/data/newsData';
+import { categories, getNewsByCategory, getCategoryById, getTranslatedArticle } from '@/data/newsData';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
 export default function LatestNewsFeed() {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const news = selectedCategory === 'all' 
+  const { language } = useLanguage();
+  const t = translations[language];
+
+  const rawNews = selectedCategory === 'all' 
     ? getNewsByCategory('all') 
     : getNewsByCategory(selectedCategory);
+
+  const news = rawNews.map(article => getTranslatedArticle(article, language));
 
   return (
     <section className="py-12 bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
@@ -17,7 +24,7 @@ export default function LatestNewsFeed() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="h-8 w-1 bg-gradient-to-b from-red-600 to-blue-600 rounded-full"></div>
-            <h2 className="text-3xl md:text-4xl font-bold gradient-text">সর্বশেষ খবর</h2>
+            <h2 className="text-3xl md:text-4xl font-bold gradient-text">{t.latestNews}</h2>
           </div>
         </div>
 
@@ -32,7 +39,7 @@ export default function LatestNewsFeed() {
                   : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 shadow border border-transparent dark:border-slate-700'
               }`}
             >
-              সব খবর
+              {t.allNews}
             </button>
             {categories.map((category) => (
               <button
@@ -47,7 +54,7 @@ export default function LatestNewsFeed() {
                   backgroundColor: selectedCategory === category.id ? category.color : undefined
                 }}
               >
-                {category.name}
+                {t.categories[category.id] || category.name}
               </button>
             ))}
           </div>
@@ -75,7 +82,7 @@ export default function LatestNewsFeed() {
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                       </svg>
-                      জরুরি
+                      {language === 'bn' ? 'জরুরি' : 'Breaking'}
                     </span>
                   </div>
                 )}
@@ -89,7 +96,7 @@ export default function LatestNewsFeed() {
                       color: 'white'
                     }}
                   >
-                    {getCategoryById(article.category)?.name}
+                    {t.categories[article.category] || getCategoryById(article.category)?.name}
                   </span>
                 </div>
               </div>
@@ -117,12 +124,12 @@ export default function LatestNewsFeed() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1" suppressHydrationWarning>
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                         <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                       </svg>
-                      {article.views.toLocaleString('bn-BD')}
+                      {language === 'bn' ? article.views.toLocaleString('bn-BD') : article.views.toLocaleString()}
                     </span>
                     <span className="flex items-center gap-1">
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
@@ -140,7 +147,7 @@ export default function LatestNewsFeed() {
         {/* Load More Button */}
         <div className="text-center mt-12">
           <button className="group relative px-8 py-4 bg-gradient-to-r from-red-600 to-blue-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105">
-            <span className="relative z-10">আরও খবর দেখুন</span>
+            <span className="relative z-10">{language === 'bn' ? 'আরও খবর দেখুন' : 'See More News'}</span>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </button>
         </div>

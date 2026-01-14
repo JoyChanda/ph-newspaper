@@ -4,9 +4,21 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { categories } from '@/data/newsData';
 import ThemeToggle from './ThemeToggle';
+import LanguageToggle from './LanguageToggle';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { language } = useLanguage();
+  const t = translations[language];
+
+  // Helper for dynamic date
+  const getFormattedDate = () => {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return now.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', options);
+  };
 
   return (
     <nav className="sticky top-0 z-50 glass-effect shadow-sm dark:shadow-slate-900/50 transition-colors duration-300">
@@ -15,16 +27,17 @@ export default function Navbar() {
         <div className="border-b border-gray-200 dark:border-gray-800 py-2 transition-colors duration-300">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1" suppressHydrationWarning>
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                 </svg>
-                মঙ্গলবার, ১৪ জানুয়ারি ২০২৬
+                {getFormattedDate()}
               </span>
             </div>
-            <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2 md:gap-4">
+               <LanguageToggle />
                <ThemeToggle />
-               <div className="hidden md:flex items-center gap-4">
+               <div className="hidden md:flex items-center gap-4 text-gray-600 dark:text-gray-400">
                   <a href="#" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -55,53 +68,54 @@ export default function Navbar() {
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold gradient-text">PH Newspaper</h1>
-                <p className="text-xs text-gray-600 dark:text-gray-400">বাংলাদেশের খবর</p>
+                <h1 className="text-2xl md:text-3xl font-bold gradient-text">{t.appName}</h1>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t.appSlogan}</p>
               </div>
             </Link>
 
             {/* Desktop Categories */}
-            <div className="hidden lg:flex items-center gap-1">
+            <div className={`hidden lg:flex items-center ${language === 'en' ? 'gap-0.5' : 'gap-1'}`}>
               <Link 
                 href="/"
-                className="px-4 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all"
+                className={`whitespace-nowrap rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all ${language === 'en' ? 'px-3 py-2 text-sm' : 'px-4 py-2'}`}
               >
-                সব খবর
+                {t.allNews}
               </Link>
               <Link 
                 href="/saradesh"
-                className="px-4 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all flex items-center gap-1"
+                className={`whitespace-nowrap rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all flex items-center gap-1 ${language === 'en' ? 'px-3 py-2 text-sm' : 'px-4 py-2'}`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                সারা দেশ
+                {t.saraDesh}
               </Link>
               {categories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/news/${category.id}`}
-                  className="px-4 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all"
-                  style={{}}
+                  className={`whitespace-nowrap rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all ${language === 'en' ? 'px-3 py-2 text-sm' : 'px-4 py-2'}`}
                 >
-                  {category.name}
+                  {t.categories[category.id] || category.name}
                 </Link>
               ))}
             </div>
 
             {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-colors"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -114,7 +128,7 @@ export default function Navbar() {
                 className="px-4 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                সব খবর
+                {t.allNews}
               </Link>
               <Link 
                 href="/saradesh"
@@ -122,9 +136,9 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 300 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                সারা দেশ
+                {t.saraDesh}
               </Link>
               {categories.map((category) => (
                 <Link
@@ -133,7 +147,7 @@ export default function Navbar() {
                   className="px-4 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {category.name}
+                  {t.categories[category.id] || category.name}
                 </Link>
               ))}
             </div>

@@ -3,10 +3,12 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { districts } from '@/data/districts';
-import { getNewsByDistrict } from '@/data/newsData';
+import { getNewsByDistrict, getTranslatedArticle } from '@/data/newsData';
+import { useTheme } from 'next-themes';
+import { useLanguage } from '@/context/LanguageContext';
 
 // Custom Icon
 const icon = new L.Icon({
@@ -34,13 +36,26 @@ function MapController({ selectedDistrict }) {
 }
 
 export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
+  const { theme, resolvedTheme } = useTheme();
+  const { language } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Filter districts that have news
   const activeDistricts = useMemo(() => {
     return districts.map(d => {
       const news = getNewsByDistrict(d.id);
-      return { ...d, newsCount: news.length, topNews: news.slice(0, 3) };
+      return { ...d, newsCount: news.length, topNews: news.slice(0, 3).map(n => getTranslatedArticle(n, language)) };
     }).filter(d => d.newsCount > 0);
-  }, []);
+  }, [language]);
+
+  const currentTheme = resolvedTheme || theme;
+  const tileLayerUrl = mounted && currentTheme === 'dark'
+    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   return (
     <div className="h-full w-full relative">
@@ -51,10 +66,13 @@ export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
         className="h-full w-full rounded-xl z-0"
         style={{ height: '100%', width: '100%' }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        {mounted && (
+          <TileLayer
+            key={currentTheme} // Force re-render of TileLayer on theme change
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url={tileLayerUrl}
+          />
+        )}
         
         <MapController selectedDistrict={selectedDistrict} />
         
@@ -70,17 +88,17 @@ export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
             }}
           >
             <Popup minWidth={250}>
-              <div className="font-sans p-1">
-                <div className="flex justify-between items-center mb-2 border-b pb-1">
-                   <h3 className="font-bold text-lg text-red-600">{district.bnName}</h3>
-                   <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs font-bold">
-                     {district.newsCount} টি খবর
+              <div className="font-sans p-1 dark:text-gray-100">
+                <div className="flex justify-between items-center mb-2 border-b dark:border-gray-700 pb-1">
+                   <h3 className="font-bold text-lg text-red-600">{language === 'bn' ? district.bnName : district.name}</h3>
+                   <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-0.5 rounded text-xs font-bold">
+                     {language === 'bn' ? `${district.newsCount.toLocaleString('bn-BD')} টি খবর` : `${district.newsCount} news`}
                    </span>
                 </div>
                 
                 <ul className="space-y-2 mb-3">
                   {district.topNews.map(news => (
-                    <li key={news.id} className="text-sm border-b border-gray-100 pb-1 last:border-0 hover:text-red-600">
+                    <li key={news.id} className="text-sm border-b border-gray-100 dark:border-gray-800 pb-1 last:border-0 hover:text-red-600 transition-colors">
                       <Link href={`/news/${news.category}/${news.id}`} className="line-clamp-2 leading-tight">
                         {news.title}
                       </Link>
@@ -90,9 +108,9 @@ export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
 
                 <Link 
                   href={`/saradesh/${district.id}`}
-                  className="block w-full text-center bg-red-600 text-white text-sm py-1.5 rounded hover:bg-red-700 transition"
+                  className="block w-full text-center bg-red-600 text-white text-sm py-1.5 rounded hover:bg-red-700 transition shadow-sm"
                 >
-                  সব খবর দেখুন &rarr;
+                  {language === 'bn' ? 'সব খবর দেখুন \u2192' : 'View all news \u2192'}
                 </Link>
               </div>
             </Popup>

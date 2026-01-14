@@ -1,84 +1,94 @@
+'use client';
+
 import Link from 'next/link';
+import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DistrictStatsChart from '@/components/DistrictStatsChart';
 import { getDistrictById } from '@/data/districts';
-import { getNewsByDistrict, getDistrictStats, getCategoryById, categories } from '@/data/newsData';
+import { getNewsByDistrict, getDistrictStats, getCategoryById, categories, getTranslatedArticle } from '@/data/newsData';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
-export async function generateMetadata({ params }) {
-  const { district } = await params;
-  const districtData = getDistrictById(district);
-  
-  if (!districtData) return { title: 'District Not Found' };
+export default function DistrictDetailPage({ params: paramsPromise, searchParams: searchParamsPromise }) {
+  const params = use(paramsPromise);
+  const searchParams = use(searchParamsPromise);
+  const { district } = params;
+  const { language } = useLanguage();
+  const t = translations[language];
 
-  return {
-    title: `${districtData.bnName} - সারা দেশ | PH Newspaper`,
-    description: `${districtData.bnName} ${districtData.name} জেলার সর্বশেষ খবর ও আপডেট।`,
-  };
-}
-
-export default async function DistrictDetailPage({ params, searchParams }) {
-  const { district } = await params;
-  const query = await searchParams;
-  const categoryFilter = query?.category || 'all';
-  const sortOption = query?.sort || 'date';
+  const categoryFilter = searchParams?.category || 'all';
+  const sortOption = searchParams?.sort || 'date';
 
   const districtData = getDistrictById(district);
 
   if (!districtData) {
      return (
-       <div className="min-h-screen flex items-center justify-center">
+       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">জেলা পাওয়া যায়নি</h1>
-            <Link href="/saradesh" className="text-red-600 hover:underline">ম্যাপে ফিরে যান</Link>
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+              {language === 'bn' ? 'জেলা পাওয়া যায়নি' : 'District Not Found'}
+            </h1>
+            <Link href="/saradesh" className="text-red-600 hover:underline">
+              {language === 'bn' ? 'ম্যাপে ফিরে যান' : 'Back to Map'}
+            </Link>
          </div>
        </div>
      );
   }
 
   // Get Data
-  let news = getNewsByDistrict(district);
+  let rawNews = getNewsByDistrict(district);
   const stats = getDistrictStats(district);
 
   // Filter
   if (categoryFilter !== 'all') {
-    news = news.filter(item => item.category === categoryFilter);
+    rawNews = rawNews.filter(item => item.category === categoryFilter);
   }
 
   // Sort
-  news = [...news].sort((a, b) => {
+  rawNews = [...rawNews].sort((a, b) => {
     if (sortOption === 'popularity') {
       return b.views - a.views;
     }
     return new Date(b.date) - new Date(a.date);
   });
 
+  const news = rawNews.map(item => getTranslatedArticle(item, language));
+
+  const translatedDistrictName = language === 'bn' ? districtData.bnName : districtData.name;
+  const translatedDivisionName = language === 'bn' ? districtData.division : districtData.division; // Assuming division names are same or need translation
+
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
       
       {/* Header Section */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="container-custom py-8">
            <div className="flex flex-col md:flex-row gap-8 items-start">
               
               {/* Title & Info */}
               <div className="flex-1">
-                 <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                    <Link href="/" className="hover:text-red-600">হোম</Link> / 
-                    <Link href="/saradesh" className="hover:text-red-600">সারা দেশ</Link> /
-                    <span className="text-gray-900 font-bold">{districtData.bnName}</span>
+                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <Link href="/" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">{t.home}</Link> 
+                    <span>/</span>
+                    <Link href="/saradesh" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">{t.saraDesh}</Link> 
+                    <span>/</span>
+                    <span className="text-gray-900 dark:text-gray-100 font-bold">{translatedDistrictName}</span>
                  </div>
                  
                  <div className="flex items-center gap-4 mb-4">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900">{districtData.bnName}</h1>
-                    <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold">
-                       {districtData.division} বিভাগ
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">{translatedDistrictName}</h1>
+                    <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                       {translatedDivisionName} {language === 'bn' ? 'বিভাগ' : 'Division'}
                     </span>
                  </div>
                  
-                 <p className="text-gray-600 max-w-2xl">
-                    {districtData.name} জেলার শিক্ষা, রাজনীতি, অর্থনীতি ও জনজীবনের সর্বশেষ সংবাদ।
+                 <p className="text-gray-600 dark:text-gray-400 max-w-2xl text-lg">
+                    {language === 'bn' 
+                      ? `${translatedDistrictName} জেলার শিক্ষা, রাজনীতি, অর্থনীতি ও জনজীবনের সর্বশেষ সংবাদ।` 
+                      : `Latest news and updates on education, politics, economy, and public life of ${translatedDistrictName} district.`}
                  </p>
               </div>
 
@@ -93,83 +103,98 @@ export default async function DistrictDetailPage({ params, searchParams }) {
       {/* Content Section */}
       <div className="container-custom py-12">
          {/* Filters & Sort */}
-         <div className="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8 gap-4">
+         <div className="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 mb-8 gap-4 transition-colors">
             
             {/* Category Filter */}
-            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-               <span className="text-sm font-bold text-gray-700 whitespace-nowrap">ফিল্টার:</span>
+            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
+               <span className="text-sm font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                 {language === 'bn' ? 'ফিল্টার:' : 'Filter:'}
+               </span>
                <Link 
                  href={`/saradesh/${district}?category=all&sort=${sortOption}`}
-                 className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-colors whitespace-nowrap ${
-                    categoryFilter === 'all' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                 className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap shadow-sm ${
+                    categoryFilter === 'all' 
+                      ? 'bg-red-600 text-white' 
+                      : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
                  }`}
                >
-                 সব
+                 {language === 'bn' ? 'সব' : 'All'}
                </Link>
                {categories.map(cat => (
                  <Link
                    key={cat.id}
                    href={`/saradesh/${district}?category=${cat.id}&sort=${sortOption}`}
-                   className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-colors whitespace-nowrap ${
+                   className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap shadow-sm ${
                       categoryFilter === cat.id 
                         ? 'text-white' 
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
                    }`}
                    style={categoryFilter === cat.id ? { backgroundColor: cat.color } : {}}
                  >
-                   {cat.name}
+                   {t.categories[cat.id] || cat.name}
                  </Link>
                ))}
             </div>
 
-            {/* Sort Dropdown (Simulated with Links) */}
+            {/* Sort Dropdown */}
             <div className="flex items-center gap-2">
-               <span className="text-sm font-bold text-gray-700">সাজান:</span>
-               <div className="flex bg-gray-100 rounded-lg p-1">
+               <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                 {language === 'bn' ? 'সাজান:' : 'Sort by:'}
+               </span>
+               <div className="flex bg-gray-100 dark:bg-slate-800 rounded-lg p-1 shadow-inner">
                   <Link
                     href={`/saradesh/${district}?category=${categoryFilter}&sort=date`}
-                    className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
-                       sortOption === 'date' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'
+                    className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${
+                       sortOption === 'date' 
+                        ? 'bg-white dark:bg-slate-700 shadow-md text-gray-900 dark:text-white' 
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                     }`}
                   >
-                    সময়
+                    {language === 'bn' ? 'সময়' : 'Time'}
                   </Link>
                   <Link
                     href={`/saradesh/${district}?category=${categoryFilter}&sort=popularity`}
-                    className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
-                       sortOption === 'popularity' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'
+                    className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${
+                       sortOption === 'popularity' 
+                        ? 'bg-white dark:bg-slate-700 shadow-md text-gray-900 dark:text-white' 
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                     }`}
                   >
-                    জনপ্রিয়তা
+                    {language === 'bn' ? 'জনপ্রিয়তা' : 'Popularity'}
                   </Link>
                </div>
             </div>
          </div>
 
          {/* News List */}
-         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {news.map(article => (
                <Link
                  key={article.id}
                  href={`/news/${article.category}/${article.id}`}
-                 className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all"
+                 className="group bg-white dark:bg-slate-900 rounded-xl shadow-md border border-gray-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all card-hover"
                >
-                  <div className="h-48 bg-gray-200 relative overflow-hidden">
-                     <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 group-hover:scale-110 transition-transform duration-500"></div>
-                     <span className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
-                        {article.category}
+                  <div className="h-48 bg-gray-200 dark:bg-slate-800 relative overflow-hidden">
+                     <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 dark:from-slate-700 dark:to-slate-600 group-hover:scale-110 transition-transform duration-500"></div>
+                     <span 
+                        className="absolute top-3 left-3 bg-black/60 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full backdrop-blur-md"
+                        style={{ borderLeft: `3px solid ${getCategoryById(article.category)?.color}` }}
+                      >
+                        {t.categories[article.category] || article.category}
                      </span>
                   </div>
-                  <div className="p-5">
-                     <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2">
+                  <div className="p-6">
+                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 min-h-[3.5rem] leading-tight">
                         {article.title}
                      </h3>
-                     <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                     <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-6 leading-relaxed">
                         {article.excerpt}
                      </p>
-                     <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>{article.date}</span>
-                        <span>{article.views.toLocaleString()} views</span>
+                     <div className="flex items-center justify-between text-[11px] font-semibold text-gray-500 dark:text-gray-500 pt-4 border-t border-gray-50 dark:border-slate-800">
+                        <span className="flex items-center gap-1">📅 {article.date}</span>
+                        <span className="flex items-center gap-1" suppressHydrationWarning>
+                          👁️ {language === 'bn' ? article.views.toLocaleString('bn-BD') : article.views.toLocaleString()} {t.views}
+                        </span>
                      </div>
                   </div>
                </Link>
@@ -177,8 +202,11 @@ export default async function DistrictDetailPage({ params, searchParams }) {
          </div>
 
          {news.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
-               <p className="text-xl text-gray-500">এই ক্যাটাগরিতে কোনো খবর পাওয়া যায়নি</p>
+            <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border-2 border-dashed border-gray-200 dark:border-slate-800 transition-colors">
+               <div className="text-5xl mb-4 opacity-30 text-gray-400">📭</div>
+               <p className="text-xl font-semibold text-gray-500 dark:text-gray-400">
+                 {language === 'bn' ? "এই ক্যাটাগরিতে কোনো খবর পাওয়া যায়নি" : "No news found in this category"}
+               </p>
             </div>
          )}
       </div>

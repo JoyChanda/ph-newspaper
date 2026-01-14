@@ -1,55 +1,48 @@
+'use client';
+
 import Link from 'next/link';
+import { use } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BreakingNews from '@/components/BreakingNews';
 import ViewCounter from '@/components/ViewCounter';
-import { getNewsById, getCategoryById, getNewsByCategory } from '@/data/newsData';
+import { getNewsById, getCategoryById, getNewsByCategory, getTranslatedArticle } from '@/data/newsData';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
-export async function generateMetadata({ params }) {
-  const { id } = await params;
-  const newsId = parseInt(id);
-  const article = getNewsById(newsId);
+export default function NewsDetailPage({ params: paramsPromise }) {
+  const params = use(paramsPromise);
+  const { id } = params;
+  const { language } = useLanguage();
+  const t = translations[language];
   
-  if (!article) {
-    return {
-      title: 'খবর পাওয়া যায়নি | PH Newspaper',
-    };
-  }
-
-  return {
-    title: `${article.title} | PH Newspaper`,
-    description: article.excerpt,
-    openGraph: {
-      title: article.title,
-      description: article.excerpt,
-      images: [article.image],
-    },
-  };
-}
-
-export default async function NewsDetailPage({ params }) {
-  const { id } = await params;
   const newsId = parseInt(id);
-  const article = getNewsById(newsId);
+  const rawArticle = getNewsById(newsId);
+  const article = getTranslatedArticle(rawArticle, language);
 
   if (!article) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">খবর পাওয়া যায়নি</h1>
-          <Link href="/" className="text-red-600 hover:underline">হোমে ফিরে যান</Link>
+          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+            {language === 'bn' ? 'খবর পাওয়া যায়নি' : 'Article Not Found'}
+          </h1>
+          <Link href="/" className="text-red-600 hover:underline">
+            {language === 'bn' ? 'হোমে ফিরে যান' : 'Back to Home'}
+          </Link>
         </div>
       </div>
     );
   }
 
   const category = getCategoryById(article.category);
-  const relatedNews = getNewsByCategory(article.category)
+  const relatedNewsRaw = getNewsByCategory(article.category)
     .filter(news => news.id !== article.id)
     .slice(0, 3);
+  const relatedNews = relatedNewsRaw.map(news => getTranslatedArticle(news, language));
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
       <BreakingNews />
 
@@ -58,18 +51,20 @@ export default async function NewsDetailPage({ params }) {
         <div className="container-custom max-w-4xl">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 mb-6 text-sm">
-            <Link href="/" className="text-gray-600 hover:text-red-600 transition-colors">
-              হোম
+            <Link href="/" className="text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors">
+              {t.home}
             </Link>
             <span className="text-gray-400">/</span>
             <Link 
               href={`/news/${article.category}`}
-              className="text-gray-600 hover:text-red-600 transition-colors"
+              className="text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
             >
-              {category?.name}
+              {t.categories[article.category] || category?.name}
             </Link>
             <span className="text-gray-400">/</span>
-            <span className="text-gray-800 font-semibold">খবর</span>
+            <span className="text-gray-800 dark:text-gray-200 font-semibold">
+              {language === 'bn' ? 'খবর' : 'News'}
+            </span>
           </div>
 
           {/* Category & Breaking Badge */}
@@ -81,53 +76,55 @@ export default async function NewsDetailPage({ params }) {
                 color: 'white'
               }}
             >
-              {category?.name}
+              {t.categories[article.category] || category?.name}
             </span>
             {article.isBreaking && (
               <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 pulse-glow">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                 </svg>
-                জরুরি খবর
+                {t.breakingNews}
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
             {article.title}
           </h1>
 
           {/* Excerpt */}
-          <p className="text-xl text-gray-700 mb-8 leading-relaxed">
+          <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
             {article.excerpt}
           </p>
 
           {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-6 pb-6 mb-8 border-b border-gray-200">
+          <div className="flex flex-wrap items-center gap-6 pb-6 mb-8 border-b border-gray-200 dark:border-slate-800">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
                 {article.author.charAt(0)}
               </div>
               <div>
-                <p className="font-semibold text-gray-900">{article.author}</p>
-                <p className="text-sm text-gray-500">লেখক</p>
+                <p className="font-semibold text-gray-900 dark:text-white">{article.author}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {language === 'bn' ? 'লেখক' : 'Author'}
+                </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
               </svg>
               <span>{article.date}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                <ViewCounter initialViews={article.views} />
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
               </svg>
-              <span>{article.readTime} পড়ার সময়</span>
+              <span>{article.readTime} {language === 'bn' ? 'পড়ার সময়' : 'read time'}</span>
             </div>
           </div>
 
@@ -137,34 +134,47 @@ export default async function NewsDetailPage({ params }) {
               📰
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                 <p className="text-white text-sm text-center">Image representation for: {article.title}</p>
+                 <p className="text-white text-sm text-center">
+                   {language === 'bn' ? 'ছবির প্রতিনিধি:' : 'Image representation for:'} {article.title}
+                 </p>
             </div>
           </div>
 
           {/* Article Content */}
-          <div className="prose prose-lg max-w-none">
-            <div className="bg-white rounded-2xl p-8 shadow-lg mb-8">
-              <p className="text-lg text-gray-800 leading-relaxed mb-6 first-letter:text-6xl first-letter:font-bold first-letter:text-red-600 first-letter:float-left first-letter:mr-3 first-letter:leading-none">
+          <div className="prose prose-lg max-w-none dark:prose-invert">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-slate-800 mb-8 transition-colors">
+              <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed mb-6 first-letter:text-6xl first-letter:font-bold first-letter:text-red-600 first-letter:float-left first-letter:mr-3 first-letter:leading-none">
                 {article.content}
               </p>
               
               {/* Additional content paragraphs */}
-              <p className="text-lg text-gray-800 leading-relaxed mb-6">
-                এই ঘটনার প্রেক্ষিতে বিশেষজ্ঞরা মনে করছেন যে আগামী দিনগুলোতে এই বিষয়ে আরও গুরুত্বপূর্ণ উন্নয়ন দেখা যাবে। সংশ্লিষ্ট কর্তৃপক্ষ এই বিষয়ে জনগণের মতামত গ্রহণ করছে এবং প্রয়োজনীয় পদক্ষেপ নিতে প্রস্তুত রয়েছে।
+              <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed mb-6">
+                {language === 'bn' 
+                  ? 'এই ঘটনার প্রেক্ষিতে বিশেষজ্ঞরা মনে করছেন যে আগামী দিনগুলোতে এই বিষয়ে আরও গুরুত্বপূর্ণ উন্নয়ন দেখা যাবে। সংশ্লিষ্ট কর্তৃপক্ষ এই বিষয়ে জনগণের মতামত গ্রহণ করছে এবং প্রয়োজনীয় পদক্ষেপ নিতে প্রস্তুত রয়েছে।'
+                  : 'In light of this event, experts believe that more important developments will be seen in this regard in the coming days. The concerned authorities are taking public opinion on this matter and are ready to take necessary steps.'
+                }
               </p>
 
-              <blockquote className="border-l-4 border-red-600 pl-4 italic my-6 text-gray-700 bg-gray-50 p-4 rounded-r-lg">
-                "আমরা এই বিষয়ে সর্বোচ্চ গুরুত্ব দিচ্ছি এবং শীঘ্রই বিস্তারিত জানানো হবে।" - একজন মুখপাত্র
+              <blockquote className="border-l-4 border-red-600 pl-4 italic my-6 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 p-4 rounded-r-lg">
+                "{language === 'bn' 
+                  ? 'আমরা এই বিষয়ে সর্বোচ্চ গুরুত্ব দিচ্ছি এবং শীঘ্রই বিস্তারিত জানানো হবে।' 
+                  : 'We are giving this matter the highest priority and details will be shared soon.'
+                }" - {language === 'bn' ? 'একজন মুখপাত্র' : 'A Spokesperson'}
               </blockquote>
 
-              <p className="text-lg text-gray-800 leading-relaxed">
-                এই সংক্রান্ত আরও তথ্য ও আপডেট পেতে আমাদের সাথেই থাকুন। আমরা নিয়মিত এই বিষয়ে সর্বশেষ খবর প্রকাশ করব।
+              <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed">
+                {language === 'bn'
+                  ? 'এই সংক্রান্ত আরও তথ্য ও আপডেট পেতে আমাদের সাথেই থাকুন। আমরা নিয়মিত এই বিষয়ে সর্বশেষ খবর প্রকাশ করব।'
+                  : 'Stay with us for more information and updates on this. We will regularly publish the latest news on this topic.'
+                }
               </p>
             </div>
 
             {/* Share Buttons */}
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">শেয়ার করুন</h3>
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-6 mb-8 transition-colors">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                {language === 'bn' ? 'শেয়ার করুন' : 'Share This'}
+              </h3>
               <div className="flex gap-3">
                 <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -192,11 +202,11 @@ export default async function NewsDetailPage({ params }) {
 
       {/* Related News */}
       {relatedNews.length > 0 && (
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-white dark:bg-slate-950 transition-colors">
           <div className="container-custom max-w-6xl">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1 bg-gradient-to-b from-red-600 to-blue-600 rounded-full"></div>
-              <h2 className="text-3xl font-bold gradient-text">সম্পর্কিত খবর</h2>
+              <h2 className="text-3xl font-bold gradient-text">{t.relatedNews}</h2>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
@@ -204,16 +214,16 @@ export default async function NewsDetailPage({ params }) {
                 <Link
                   key={news.id}
                   href={`/news/${news.category}/${news.id}`}
-                  className="group bg-gray-50 rounded-xl shadow-lg overflow-hidden card-hover"
+                  className="group bg-gray-50 dark:bg-slate-900 rounded-xl shadow-lg overflow-hidden card-hover transition-colors"
                 >
                   <div className="relative h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500">
                     <div className="absolute inset-0 bg-black opacity-20 group-hover:opacity-0 transition-opacity"></div>
                   </div>
                   <div className="p-5">
-                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-red-600 transition-colors line-clamp-2 mb-2">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 mb-2">
                       {news.title}
                     </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                       {news.excerpt}
                     </p>
                   </div>
