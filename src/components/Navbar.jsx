@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { categories } from '@/data/newsData';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
@@ -12,9 +12,15 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language } = useLanguage();
   const t = translations[language];
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Helper for dynamic date
   const getFormattedDate = () => {
+    if (!mounted) return ''; // Return empty string during SSR
     const now = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return now.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', options);
