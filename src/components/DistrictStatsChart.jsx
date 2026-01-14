@@ -24,37 +24,48 @@ export default function DistrictStatsChart({ data }) {
   const tooltipText = isDark ? '#f8fafc' : '#1f2937';
 
   return (
-    <div className="h-[300px] w-full bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
-      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">সংবাদ পরিসংখ্যান</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={gridColor} />
-          <XAxis type="number" hide />
-          <YAxis 
-            dataKey="name" 
-            type="category" 
-            width={80} 
-            tick={{ fontSize: 12, fill: textColor }} 
-            axisLine={false}
-            tickLine={false}
-          />
-          <Tooltip 
-            cursor={{ fill: isDark ? '#334155' : '#f3f4f6' }}
-            contentStyle={{ 
-              borderRadius: '8px', 
-              border: 'none', 
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              backgroundColor: tooltipBg,
-              color: tooltipText
-            }}
-          />
-          <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="h-[450px] w-full bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 transition-all duration-300 flex flex-col">
+      <div className="flex items-center gap-2 mb-6">
+        <div className="w-1.5 h-6 bg-red-600 rounded-full"></div>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">সংবাদ পরিসংখ্যান</h3>
+      </div>
+      
+      <div className="flex-1 w-full min-h-0">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart 
+            data={data} 
+            layout="vertical" 
+            margin={{ top: 0, right: 30, left: 10, bottom: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={gridColor} />
+            <XAxis type="number" hide />
+            <YAxis 
+              dataKey="name" 
+              type="category" 
+              width={100} 
+              tick={{ fontSize: 13, fill: textColor, fontWeight: 500 }} 
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip 
+              cursor={{ fill: isDark ? '#334155' : '#f3f4f6', opacity: 0.4 }}
+              contentStyle={{ 
+                borderRadius: '12px', 
+                border: 'none', 
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                backgroundColor: tooltipBg,
+                color: tooltipText,
+                padding: '12px'
+              }}
+            />
+            <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={24}>
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

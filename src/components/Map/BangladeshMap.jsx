@@ -96,10 +96,13 @@ export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
                    </span>
                 </div>
                 
-                <ul className="space-y-2 mb-3">
+                <ul className="space-y-3 mb-4">
                   {district.topNews.map(news => (
-                    <li key={news.id} className="text-sm border-b border-gray-100 dark:border-gray-800 pb-1 last:border-0 hover:text-red-600 transition-colors">
-                      <Link href={`/news/${news.category}/${news.id}`} className="line-clamp-2 leading-tight">
+                    <li key={news.id} className="border-b border-gray-100 dark:border-slate-800 pb-2 last:border-0">
+                      <Link 
+                        href={`/news/${news.category}/${news.id}`} 
+                        className="text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-red-600 dark:hover:text-red-500 transition-colors line-clamp-2 leading-snug"
+                      >
                         {news.title}
                       </Link>
                     </li>
@@ -108,7 +111,7 @@ export default function BangladeshMap({ selectedDistrict, onSelectDistrict }) {
 
                 <Link 
                   href={`/saradesh/${district.id}`}
-                  className="block w-full text-center bg-red-600 text-white text-sm py-1.5 rounded hover:bg-red-700 transition shadow-sm"
+                  className="block w-full text-center bg-red-600 !text-white font-bold text-sm py-2 rounded hover:bg-red-700 transition shadow-md"
                 >
                   {language === 'bn' ? 'সব খবর দেখুন \u2192' : 'View all news \u2192'}
                 </Link>
